@@ -18,7 +18,6 @@ body {
     height: 100vh;
 }
 
-/* Contenedor principal */
 .container {
     text-align: center;
     width: 85%;
@@ -41,15 +40,14 @@ body {
     transform: translateX(0);
 }
 
-/* Botón */
 button {
-    margin-top: 20px;
-    padding: 12px 20px;
+    margin-top: 15px;
+    padding: 10px 18px;
     border: none;
     border-radius: 15px;
     background: #ff6ec7;
     color: white;
-    font-size: 16px;
+    font-size: 15px;
     cursor: pointer;
     transition: 0.3s;
 }
@@ -58,14 +56,29 @@ button:hover {
     background: #ff1493;
 }
 
-/* Contador */
+input {
+    margin-top: 15px;
+    padding: 10px;
+    width: 90%;
+    border-radius: 12px;
+    border: none;
+    outline: none;
+    text-align: center;
+    font-size: 14px;
+}
+
 .counter {
-    margin-bottom: 15px;
+    margin-bottom: 10px;
     font-size: 14px;
     opacity: 0.8;
 }
 
-/* Estrellas */
+.error {
+    color: #ff9bd2;
+    margin-top: 10px;
+    font-size: 13px;
+}
+
 .star {
     position: absolute;
     background: white;
@@ -78,7 +91,6 @@ button:hover {
     to { opacity: 1; }
 }
 
-/* Luna */
 .moon {
     position: absolute;
     top: 50px;
@@ -110,39 +122,70 @@ button:hover {
 <div class="container" id="game">
     <div class="counter" id="counter"></div>
     <div id="question"></div>
-    <button onclick="nextQuestion()">Siguiente 💫</button>
+    <input type="text" id="answer" placeholder="Escribe tu respuesta aquí 💕">
+    <div class="error" id="error"></div>
+    <button onclick="checkAnswer()">Responder 💫</button>
 </div>
 
 <script>
 const questions = [
-"1. No tiene voz, pero dice 'te amo' sin hablar. ¿Qué es?",
-"2. Si lo cuidas florece, si lo ignoras se marchita. ¿Qué es?",
-"3. No se ve, pero se siente fuerte en el pecho. ¿Qué es?",
-"4. Mientras más lo compartes, más crece. ¿Qué es?",
-"5. Puede romperse sin tocarse. ¿Qué es?",
-"6. Late cuando estás cerca. ¿Qué es?",
-"7. No tiene alas pero vuela cuando sonríes. ¿Qué es?",
-"8. Puede doler y sanar al mismo tiempo. ¿Qué es?",
-"9. No pesa, pero puede cambiar tu mundo. ¿Qué es?",
-"10. Es pequeño, pero guarda grandes sentimientos. ¿Qué es?",
-"11. No es fuego, pero quema si no es sincero. ¿Qué es?",
-"12. Une dos almas invisiblemente. ¿Qué es?",
-"13. No tiene forma, pero lo reconoces cuando llega. ¿Qué es?",
-"14. Hace que el tiempo pase rápido cuando estás feliz. ¿Qué es?",
-"15. Puede comenzar con una mirada. ¿Qué es?",
-"16. Se alimenta de detalles y cariño. ¿Qué es?",
-"17. Puede sobrevivir a la distancia si es verdadero. ¿Qué es?",
-"18. No se compra, pero vale todo. ¿Qué es?",
-"19. Es la respuesta a muchos de estos acertijos. ¿Qué es?",
-"20. Empieza con tú y termina con yo. ¿Qué es?"
+"No tiene voz, pero dice 'te amo' sin hablar. ¿Qué es?",
+"Si lo cuidas florece, si lo ignoras se marchita. ¿Qué es?",
+"No se ve, pero se siente fuerte en el pecho. ¿Qué es?",
+"Mientras más lo compartes, más crece. ¿Qué es?",
+"Puede romperse sin tocarse. ¿Qué es?",
+"Late cuando estás cerca. ¿Qué es?",
+"No tiene alas pero vuela cuando sonríes. ¿Qué es?",
+"Puede doler y sanar al mismo tiempo. ¿Qué es?",
+"No pesa, pero puede cambiar tu mundo. ¿Qué es?",
+"Es pequeño, pero guarda grandes sentimientos. ¿Qué es?",
+"No es fuego, pero quema si no es sincero. ¿Qué es?",
+"Une dos almas invisiblemente. ¿Qué es?",
+"No tiene forma, pero lo reconoces cuando llega. ¿Qué es?",
+"Hace que el tiempo pase rápido cuando estás feliz. ¿Qué es?",
+"Puede comenzar con una mirada. ¿Qué es?",
+"Se alimenta de detalles y cariño. ¿Qué es?",
+"Puede sobrevivir a la distancia si es verdadero. ¿Qué es?",
+"No se compra, pero vale todo. ¿Qué es?",
+"Es la respuesta a muchos de estos acertijos. ¿Qué es?",
+"Empieza con tú y termina con yo. ¿Qué es?"
+];
+
+const answers = [
+["mirada","ojos"],
+["amor","relacion"],
+["amor","sentimiento"],
+["amor","felicidad"],
+["corazon","confianza"],
+["corazon"],
+["amor","ilusion"],
+["amor"],
+["amor"],
+["corazon"],
+["amor"],
+["amor","conexion"],
+["amor"],
+["amor","felicidad"],
+["amor"],
+["amor"],
+["amor"],
+["amor"],
+["amor"],
+["tu y yo","nosotros"]
 ];
 
 let current = 0;
+
+function normalize(text) {
+    return text.toLowerCase().trim();
+}
 
 function showQuestion() {
     const game = document.getElementById("game");
     const question = document.getElementById("question");
     const counter = document.getElementById("counter");
+    const input = document.getElementById("answer");
+    const error = document.getElementById("error");
 
     game.classList.remove("fade-in");
     game.classList.add("fade-out");
@@ -151,9 +194,12 @@ function showQuestion() {
         if (current < questions.length) {
             question.innerText = questions[current];
             counter.innerText = (current + 1) + " / " + questions.length;
+            input.value = "";
+            error.innerText = "";
         } else {
             question.innerHTML = "<div class='final-message'><b>gracias por jugar te amo</b></div>";
             counter.innerText = "";
+            input.style.display = "none";
             document.querySelector("button").style.display = "none";
         }
 
@@ -162,14 +208,20 @@ function showQuestion() {
     }, 400);
 }
 
-function nextQuestion() {
-    current++;
-    showQuestion();
+function checkAnswer() {
+    const userAnswer = normalize(document.getElementById("answer").value);
+    const error = document.getElementById("error");
+
+    if (answers[current].some(ans => userAnswer.includes(ans))) {
+        current++;
+        showQuestion();
+    } else {
+        error.innerText = "Te equivocaste, inténtalo de nuevo hermosa";
+    }
 }
 
 showQuestion();
 
-/* Generar estrellas */
 for(let i = 0; i < 60; i++){
     let star = document.createElement("div");
     star.classList.add("star");
