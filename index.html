@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Acertijos Amorosos</title>
+
+<style>
+body {
+    margin: 0;
+    font-family: 'Arial', sans-serif;
+    background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364);
+    overflow: hidden;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+/* Contenedor principal */
+.container {
+    text-align: center;
+    width: 85%;
+    max-width: 400px;
+    background: rgba(0,0,0,0.4);
+    padding: 25px;
+    border-radius: 20px;
+    backdrop-filter: blur(5px);
+    position: relative;
+    transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.fade-out {
+    opacity: 0;
+    transform: translateX(-20px);
+}
+
+.fade-in {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+/* Botón */
+button {
+    margin-top: 20px;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 15px;
+    background: #ff6ec7;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+button:hover {
+    background: #ff1493;
+}
+
+/* Contador */
+.counter {
+    margin-bottom: 15px;
+    font-size: 14px;
+    opacity: 0.8;
+}
+
+/* Estrellas */
+.star {
+    position: absolute;
+    background: white;
+    border-radius: 50%;
+    animation: twinkle 2s infinite alternate;
+}
+
+@keyframes twinkle {
+    from { opacity: 0.3; }
+    to { opacity: 1; }
+}
+
+/* Luna */
+.moon {
+    position: absolute;
+    top: 50px;
+    right: 40px;
+    width: 80px;
+    height: 80px;
+    background: radial-gradient(circle at 30% 30%, #fff, #ddd);
+    border-radius: 50%;
+    box-shadow: 0 0 20px 5px rgba(255,255,255,0.5);
+    animation: glow 3s infinite alternate;
+}
+
+@keyframes glow {
+    from { box-shadow: 0 0 20px 5px rgba(255,255,255,0.4); }
+    to { box-shadow: 0 0 40px 10px rgba(255,255,255,0.8); }
+}
+
+.final-message {
+    font-weight: bold;
+    font-size: 20px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="moon"></div>
+
+<div class="container" id="game">
+    <div class="counter" id="counter"></div>
+    <div id="question"></div>
+    <button onclick="nextQuestion()">Siguiente 💫</button>
+</div>
+
+<script>
+const questions = [
+"1. No tiene voz, pero dice 'te amo' sin hablar. ¿Qué es?",
+"2. Si lo cuidas florece, si lo ignoras se marchita. ¿Qué es?",
+"3. No se ve, pero se siente fuerte en el pecho. ¿Qué es?",
+"4. Mientras más lo compartes, más crece. ¿Qué es?",
+"5. Puede romperse sin tocarse. ¿Qué es?",
+"6. Late cuando estás cerca. ¿Qué es?",
+"7. No tiene alas pero vuela cuando sonríes. ¿Qué es?",
+"8. Puede doler y sanar al mismo tiempo. ¿Qué es?",
+"9. No pesa, pero puede cambiar tu mundo. ¿Qué es?",
+"10. Es pequeño, pero guarda grandes sentimientos. ¿Qué es?",
+"11. No es fuego, pero quema si no es sincero. ¿Qué es?",
+"12. Une dos almas invisiblemente. ¿Qué es?",
+"13. No tiene forma, pero lo reconoces cuando llega. ¿Qué es?",
+"14. Hace que el tiempo pase rápido cuando estás feliz. ¿Qué es?",
+"15. Puede comenzar con una mirada. ¿Qué es?",
+"16. Se alimenta de detalles y cariño. ¿Qué es?",
+"17. Puede sobrevivir a la distancia si es verdadero. ¿Qué es?",
+"18. No se compra, pero vale todo. ¿Qué es?",
+"19. Es la respuesta a muchos de estos acertijos. ¿Qué es?",
+"20. Empieza con tú y termina con yo. ¿Qué es?"
+];
+
+let current = 0;
+
+function showQuestion() {
+    const game = document.getElementById("game");
+    const question = document.getElementById("question");
+    const counter = document.getElementById("counter");
+
+    game.classList.remove("fade-in");
+    game.classList.add("fade-out");
+
+    setTimeout(() => {
+        if (current < questions.length) {
+            question.innerText = questions[current];
+            counter.innerText = (current + 1) + " / " + questions.length;
+        } else {
+            question.innerHTML = "<div class='final-message'><b>gracias por jugar te amo</b></div>";
+            counter.innerText = "";
+            document.querySelector("button").style.display = "none";
+        }
+
+        game.classList.remove("fade-out");
+        game.classList.add("fade-in");
+    }, 400);
+}
+
+function nextQuestion() {
+    current++;
+    showQuestion();
+}
+
+showQuestion();
+
+/* Generar estrellas */
+for(let i = 0; i < 60; i++){
+    let star = document.createElement("div");
+    star.classList.add("star");
+    star.style.width = star.style.height = Math.random() * 3 + "px";
+    star.style.top = Math.random() * 100 + "%";
+    star.style.left = Math.random() * 100 + "%";
+    star.style.animationDuration = (Math.random() * 3 + 1) + "s";
+    document.body.appendChild(star);
+}
+</script>
+
+</body>
+</html>
